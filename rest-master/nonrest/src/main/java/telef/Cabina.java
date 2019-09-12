@@ -1,4 +1,4 @@
-package payroll;
+package telef;
 
 import lombok.Data;
 
@@ -14,3 +14,11 @@ class Cabina {
 	private String name;
 	private String role;
 
+
+Cabina() {}
+
+	Cabina(String name, String role) {
+		this.name = name;
+		this.role = role;
+	}
+}
