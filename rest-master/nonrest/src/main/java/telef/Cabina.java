@@ -12,13 +12,13 @@ class Cabina {
 
 	private @Id @GeneratedValue Long id;
 	private String Name; //Numero de cabina(?)
-	private String color;
+	private String Color;
 
 	Cabina() {}
 
-	Cabina(String Name, String color) {
+	Cabina(String Name, String Color) {
 		this.Name = Name;
-		this.color = color;
+		this.Color = Color;
 	}
 
 	public String getName() {
