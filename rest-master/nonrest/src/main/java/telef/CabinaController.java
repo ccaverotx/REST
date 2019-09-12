@@ -38,6 +38,17 @@ class CabinaController {
 		return repository.findById(id)
 			.orElseThrow(() -> new CabinaNotFoundException(id));
 	}
+	
+	@GetMapping("/employees/{id}")
+	Resource<Cabina> one(@PathVariable Long id) {
+
+	  Cabina cabina = repository.findById(id)
+	    .orElseThrow(() -> new CabinaNotFoundException(id));
+
+	  return new Resource<>(cabina,
+	    linkTo(methodOn(CabinaController.java).one(id)).withSelfRel(),
+	    linkTo(methodOn(CabinaController.java).all()).withRel("cabinas"));
+	}
 
 	@PutMapping("/cabinas/{id}")
 	Cabina replaceCabina(@RequestBody Cabina newCabina, @PathVariable Long id) {
