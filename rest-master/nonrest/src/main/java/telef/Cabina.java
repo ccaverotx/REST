@@ -11,14 +11,22 @@ import javax.persistence.Id;
 class Cabina {
 
 	private @Id @GeneratedValue Long id;
-	private String name;
-	private String role;
+	private String Name; //Numero de cabina(?)
+	private String color;
 
+	Cabina() {}
 
-Cabina() {}
+	Cabina(String Name, String color) {
+		this.Name = Name;
+		this.color = color;
+	}
 
-	Cabina(String name, String role) {
-		this.name = name;
-		this.role = role;
+	public String getName() {
+		return this.Name;
+	}
+
+	public void setName(String name) {
+		String[] parts =name.split(" ");
+		this.Name = parts[0];
 	}
 }
