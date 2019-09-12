@@ -20,9 +20,17 @@ class CabinaController {
 
 	
 
-	@GetMapping("/cabinas")
-	List<Cabina> all() {
-		return repository.findAll();
+	@GetMapping("/employees")
+	Resources<Resource<Cabina>> all() {
+
+	  List<Resource<Cabina>> cabinas = repository.findAll().stream()
+	    .map(cabina -> new Resource<>(cabina,
+	      linkTo(methodOn(CabinaController.java).one(cabina.getId())).withSelfRel(),
+	      linkTo(methodOn(CabinaController.java).all()).withRel("cabinas")))
+	    .collect(Collectors.toList());
+
+	  return new Resources<>(cabinas,
+	    linkTo(methodOn(CabinaController.class).all()).withSelfRel());
 	}
 
 	@PostMapping("/cabinas")
