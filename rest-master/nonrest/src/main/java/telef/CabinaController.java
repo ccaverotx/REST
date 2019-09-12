@@ -12,7 +12,52 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 class CabinaController {
+    private final CabinaRepo repository;
 
+	CabinaController(CabinaRepo repository) {
+		this.repository = repository;
+	}
+
+	
+
+	@GetMapping("/cabinas")
+	List<Cabina> all() {
+		return repository.findAll();
+	}
+
+	@PostMapping("/cabinas")
+	Cabina newCabina(@RequestBody Cabina newCabina) {
+		return repository.save(newCabina);
+	}
+
+	// Single item
+	
+	@GetMapping("/cabinas/{id}")
+	Cabina one(@PathVariable Long id) {
+		
+		return repository.findById(id)
+			.orElseThrow(() -> new CabinaNotFoundException(id));
+	}
+
+	@PutMapping("/cabinas/{id}")
+	Cabina replaceCabina(@RequestBody Cabina newCabina, @PathVariable Long id) {
+		
+		return repository.findById(id)
+			.map(cabina -> {
+				cabina.setName(newCabina.getName());
+				cabina.setColor(newCabina.getColor());
+				return repository.save(cabina);
+			})
+			.orElseGet(() -> {
+				newCabina.setId(id);
+				return repository.save(newCabina);
+			});
+	}
+
+	@DeleteMapping("/cabinas/{id}")
+	void deleteCabina(@PathVariable Long id) {
+		repository.deleteById(id);
+	}
 
 }
 
