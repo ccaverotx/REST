@@ -1,4 +1,4 @@
-package payroll;
+package telef;
 
 import java.util.List;
 
@@ -32,14 +32,14 @@ class CabinaController {
 
 	// Single item
 	
-	@GetMapping("/cabinas/{id}")
+	/*@GetMapping("/cabinas/{id}")
 	Cabina one(@PathVariable Long id) {
 		
 		return repository.findById(id)
 			.orElseThrow(() -> new CabinaNotFoundException(id));
-	}
+	}*/
 	
-	@GetMapping("/employees/{id}")
+	@GetMapping("/cabinas/{id}")
 	Resource<Cabina> one(@PathVariable Long id) {
 
 	  Cabina cabina = repository.findById(id)
