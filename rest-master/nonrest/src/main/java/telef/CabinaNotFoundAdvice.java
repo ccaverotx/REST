@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 class CabinaNotFoundAdvice {
 
 	@ResponseBody
-	@ExceptionHandler(CabinaNotFoundException.class)
+	@ExceptionHandler(CabinaNotFoundException.java)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	String cabinaNotFoundHandler(CabinaNotFoundException ex) {
 		return ex.getMessage();
