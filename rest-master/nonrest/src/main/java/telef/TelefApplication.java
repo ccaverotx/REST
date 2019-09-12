@@ -7,6 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TelefApplication {
 
 	public static void main(String... args) {
-		SpringApplication.run(TelefApplication.class, args);
+		SpringApplication.run(TelefApplication.java, args);
 	}
 }
