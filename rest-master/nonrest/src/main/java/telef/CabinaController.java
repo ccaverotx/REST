@@ -1,7 +1,15 @@
 package telef;
 
-import java.util.List;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,58 +18,67 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+// tag::constructor[]
 @RestController
 class CabinaController {
-    private final CabinaRepo repository;
 
-	CabinaController(CabinaRepo repository) {
+	private final CabinaRepo repository;
+
+	private final CabinaResourceAssembler assembler;
+
+	CabinaController(CabinaRepo repository,
+					   CabinaResourceAssembler assembler) {
+		
 		this.repository = repository;
+		this.assembler = assembler;
 	}
+	// end::constructor[]
 
-	
+	// Aggregate root
 
-	@GetMapping("/employees")
+	// tag::get-aggregate-root[]
+	@GetMapping("/cabinas")
 	Resources<Resource<Cabina>> all() {
 
-	  List<Resource<Cabina>> cabinas = repository.findAll().stream()
-	    .map(cabina -> new Resource<>(cabina,
-	      linkTo(methodOn(CabinaController.java).one(cabina.getId())).withSelfRel(),
-	      linkTo(methodOn(CabinaController.java).all()).withRel("cabinas")))
-	    .collect(Collectors.toList());
-
-	  return new Resources<>(cabinas,
-	    linkTo(methodOn(CabinaController.class).all()).withSelfRel());
+		List<Resource<Cabina>> cabinas = repository.findAll().stream()
+			.map(assembler::toResource)
+			.collect(Collectors.toList());
+		
+		return new Resources<>(cabinas,
+			linkTo(methodOn(CabinaController.class).all()).withSelfRel());
 	}
+	// end::get-aggregate-root[]
 
+	// tag::post[]
 	@PostMapping("/cabinas")
-	Cabina newCabina(@RequestBody Cabina newCabina) {
-		return repository.save(newCabina);
+	ResponseEntity<?> newCabina(@RequestBody Cabina newCabina) throws URISyntaxException {
+
+		Resource<Cabina> resource = assembler.toResource(repository.save(newCabina));
+
+		return ResponseEntity
+			.created(new URI(resource.getId().expand().getHref()))
+			.body(resource);
 	}
+	// end::post[]
 
 	// Single item
-	
-	/*@GetMapping("/cabinas/{id}")
-	Cabina one(@PathVariable Long id) {
-		
-		return repository.findById(id)
-			.orElseThrow(() -> new CabinaNotFoundException(id));
-	}*/
-	
+
+	// tag::get-single-item[]
 	@GetMapping("/cabinas/{id}")
 	Resource<Cabina> one(@PathVariable Long id) {
 
-	  Cabina cabina = repository.findById(id)
-	    .orElseThrow(() -> new CabinaNotFoundException(id));
-
-	  return new Resource<>(cabina,
-	    linkTo(methodOn(CabinaController.java).one(id)).withSelfRel(),
-	    linkTo(methodOn(CabinaController.java).all()).withRel("cabinas"));
-	}
-
-	@PutMapping("/cabinas/{id}")
-	Cabina replaceCabina(@RequestBody Cabina newCabina, @PathVariable Long id) {
+		Cabina cabina = repository.findById(id)
+			.orElseThrow(() -> new CabinaNotFoundException(id));
 		
-		return repository.findById(id)
+		return assembler.toResource(cabina);
+	}
+	// end::get-single-item[]
+
+	// tag::put[]
+	@PutMapping("/cabinas/{id}")
+	ResponseEntity<?> replaceCabina(@RequestBody Cabina newCabina, @PathVariable Long id) throws URISyntaxException {
+
+		Cabina updatedCabina = repository.findById(id)
 			.map(cabina -> {
 				cabina.setName(newCabina.getName());
 				cabina.setColor(newCabina.getColor());
@@ -71,12 +88,22 @@ class CabinaController {
 				newCabina.setId(id);
 				return repository.save(newCabina);
 			});
-	}
 
+		Resource<Cabina> resource = assembler.toResource(updatedCabina);
+
+		return ResponseEntity
+			.created(new URI(resource.getId().expand().getHref()))
+			.body(resource);
+	}
+	// end::put[]
+
+	// tag::delete[]
 	@DeleteMapping("/cabinas/{id}")
-	void deleteCabina(@PathVariable Long id) {
+	ResponseEntity<?> deleteCabina(@PathVariable Long id) {
+
 		repository.deleteById(id);
+		
+		return ResponseEntity.noContent().build();
 	}
-
+	// end::delete[]
 }
-
