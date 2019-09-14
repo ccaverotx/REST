@@ -11,10 +11,24 @@ import org.springframework.context.annotation.Configuration;
 class LoadDatabase {
 
     @Bean
-    CommandLineRunner initDatabase(PasajeroRepo repository) {
+    CommandLineRunner initDatabase(PasajeroRepo pasajeroRepo,
+                                   TripRepo tripRepo) {
         return args -> {
-            log.info("Preloading " + repository.save(new Pasajero("Juan", "Perez", "Estudiante")));
-            log.info("Preloading " + repository.save(new Pasajero("Lucas", "Castro", "Ingeniero")));
+            pasajeroRepo.save(new Pasajero("Juan", "Perez", "Estudiante"));
+            pasajeroRepo.save(new Pasajero("Reinaldo", "Veloz", "Ingeniero"));
+
+            pasajeroRepo.findAll().forEach(pasajero -> {
+                log.info("Preloaded " + pasajero);
+            });
+
+            // tag::trip[]
+            tripRepo.save(new Trip("Tramo Largo", Status.COMPLETED));
+            tripRepo.save(new Trip("Tramo intermedio", Status.IN_PROGRESS));
+
+            tripRepo.findAll().forEach(trip-> {
+                log.info("Preloaded " + trip);
+            });
+            // end::trip[]
         };
     }
 }
