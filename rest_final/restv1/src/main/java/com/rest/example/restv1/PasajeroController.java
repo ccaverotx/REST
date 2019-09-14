@@ -58,7 +58,7 @@ class PasajeroController {
 
         return new Resource<>(pasajero,
                 linkTo(methodOn(PasajeroController.class).one(id)).withSelfRel(),
-                linkTo(methodOn(PasajeroController.class).all()).withRel("pasajeros"));
+                linkTo(methodOn(PasajeroContro  ller.class).all()).withRel("pasajeros"));
     }
     // end::get-single-item[]
 
