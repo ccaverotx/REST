@@ -1,17 +1,13 @@
 package com.rest.example.restv1;
-<<<<<<< HEAD
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
-=======
->>>>>>> parent of 10cd687... Controller is now RESTful :b
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-<<<<<<< HEAD
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
-=======
->>>>>>> parent of 10cd687... Controller is now RESTful :b
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,8 +27,8 @@ class PasajeroController {
 
     // Aggregate root
 
-    @GetMapping("/pasajeros")
-<<<<<<< HEAD
+    // tag::get-aggregate-root[]
+    @GetMapping(path = "/pasajeros", produces = MediaType.APPLICATION_JSON_VALUE)
     Resources<Resource<Pasajero>> all() {
 
         List<Resource<Pasajero>> pasajeros = repository.findAll().stream()
@@ -43,11 +39,8 @@ class PasajeroController {
 
         return new Resources<>(pasajeros,
                 linkTo(methodOn(PasajeroController.class).all()).withSelfRel());
-=======
-    List<Pasajero> all() {
-        return repository.findAll();
->>>>>>> parent of 10cd687... Controller is now RESTful :b
     }
+    // end::get-aggregate-root[]
 
     @PostMapping("/pasajeros")
     Pasajero newPasajero(@RequestBody Pasajero newPasajero) {
@@ -56,19 +49,18 @@ class PasajeroController {
 
     // Single item
 
+    // tag::get-single-item[]
     @GetMapping("/pasajeros/{id}")
-    Pasajero one(@PathVariable Long id) {
+    Resource<Pasajero> one(@PathVariable Long id) {
 
-        return repository.findById(id)
+        Pasajero pasajero = repository.findById(id)
                 .orElseThrow(() -> new PasajeroNotFoundException(id));
-<<<<<<< HEAD
 
         return new Resource<>(pasajero,
                 linkTo(methodOn(PasajeroController.class).one(id)).withSelfRel(),
                 linkTo(methodOn(PasajeroController.class).all()).withRel("pasajeros"));
-=======
->>>>>>> parent of 10cd687... Controller is now RESTful :b
     }
+    // end::get-single-item[]
 
     @PutMapping("/pasajeros/{id}")
     Pasajero replacePasajero(@RequestBody Pasajero newPasajero, @PathVariable Long id) {
@@ -89,8 +81,4 @@ class PasajeroController {
     void deletePasajero(@PathVariable Long id) {
         repository.deleteById(id);
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> parent of 10cd687... Controller is now RESTful :b
