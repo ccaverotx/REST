@@ -10,6 +10,7 @@ import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +34,7 @@ class TripController {
         this.assembler = assembler;
     }
 
-    @GetMapping("/trips")
+    @GetMapping(path = "/trips", produces = MediaType.APPLICATION_JSON_VALUE)
     Resources<Resource<Trip>> all() {
 
         List<Resource<Trip>> trips = tripRepo.findAll().stream()
@@ -44,7 +45,7 @@ class TripController {
                 linkTo(methodOn(TripController.class).all()).withSelfRel());
     }
 
-    @GetMapping("/trips/{id}")
+    @GetMapping(path = "/trips/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     Resource<Trip> one(@PathVariable Long id) {
         return assembler.toResource(
                 tripRepo.findById(id)
